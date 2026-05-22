@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIPG - 用户工作台</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --primary-glow: rgba(99, 102, 241, 0.25);
+            --secondary: #06b6d4;
+            --secondary-glow: rgba(6, 182, 212, 0.2);
+            --accent: #f43f5e;
+            --bg-dark: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-hover: #f1f5f9;
+            --bg-gradient-start: #f0f4ff;
+            --bg-gradient-end: #e0e7ff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --border-color: #e2e8f0;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --purple: #8b5cf6;
+            --pink: #ec4899;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+            --shadow-glow: 0 0 40px -10px var(--primary-glow);
+            --radius-sm: 8px;
+            --radius: 12px;
+            --radius-md: 16px;
+            --radius-lg: 20px;
+            --radius-xl: 24px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 50%, #f8fafc 100%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            color: var(--text-primary);
+            padding: 20px;
+            position: fixed;
+            width: 260px;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            z-index: 1000;
+            border-right: 1px solid var(--border-color);
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .sidebar-brand-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px var(--primary-glow);
+        }
+
+        .sidebar-brand-icon i {
+            font-size: 22px;
+            color: #ffffff;
+        }
+
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .sidebar-subtitle {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .user-info {
+            text-align: center;
+            padding: 16px;
+            background: rgba(0, 188, 212, 0.08);
+            border: 1px solid rgba(0, 188, 212, 0.2);
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+
+        .user-info i {
+            font-size: 32px;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .user-info .username {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            margin-bottom: 4px;
+            border-radius: 10px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background: var(--bg-hover);
+            color: var(--primary);
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, rgba(0, 188, 212, 0.15) 0%, rgba(0, 188, 212, 0.05) 100%);
+            color: var(--primary);
+            border-left: 3px solid var(--primary);
+        }
+
+        .nav-link.text-warning {
+            color: var(--warning) !important;
+        }
+
+        .nav-link.text-danger {
+            color: var(--danger) !important;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            padding: 24px;
+            min-height: 100vh;
+            overflow-x: hidden;
+            max-width: calc(100vw - 260px);
+        }
+
+        @media (max-width: 991px) {
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+                max-width: 100vw;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .main-content {
+                padding: 16px;
+            }
+        }
+
+        .page-header {
+            margin-bottom: 28px;
+        }
+
+        .page-title {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .page-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            margin-bottom: 24px;
+            transition: all 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            border-color: rgba(0, 255, 255, 0.3);
+        }
+
+        .card-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header h5 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-header h5 i {
+            color: var(--primary);
+        }
+
+        .card-body {
+            padding: 24px;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin: 20px 0;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .progress-label .used {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .progress-label .total {
+            color: var(--text-muted);
+        }
+
+        .progress-bar-container {
+            height: 24px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 12px;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-bar.bg-success {
+            background: linear-gradient(135deg, var(--success) 0%, rgba(0, 255, 136, 0.7) 100%);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .progress-bar.bg-warning {
+            background: linear-gradient(135deg, var(--warning) 0%, rgba(255, 170, 0, 0.7) 100%);
+            box-shadow: 0 0 15px rgba(255, 170, 0, 0.3);
+        }
+
+        .progress-bar.bg-danger {
+            background: linear-gradient(135deg, var(--danger) 0%, rgba(255, 68, 102, 0.7) 100%);
+            box-shadow: 0 0 15px rgba(255, 68, 102, 0.3);
+        }
+
+        /* Tables */
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table th {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--border-color);
+            padding: 14px 16px;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .table td {
+            padding: 14px 16px;
+            font-size: 14px;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .table-hover tbody tr:hover {
+            background: rgba(0, 255, 255, 0.05);
+        }
+
+        /* Badges */
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge.bg-success {
+            background: rgba(0, 255, 136, 0.15);
+            color: var(--success);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+
+        .badge.bg-danger {
+            background: rgba(255, 68, 102, 0.15);
+            color: var(--danger);
+            border: 1px solid rgba(255, 68, 102, 0.3);
+        }
+
+        .badge.bg-secondary {
+            background: rgba(136, 146, 160, 0.15);
+            color: var(--text-secondary);
+            border: 1px solid rgba(136, 146, 160, 0.3);
+        }
+
+        .badge.bg-info {
+            background: rgba(0, 255, 255, 0.15);
+            color: var(--primary);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success) 0%, rgba(0, 255, 136, 0.7) 100%);
+            color: var(--bg-dark);
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(0, 255, 136, 0.4);
+        }
+
+        .btn-outline-primary {
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            background: transparent;
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--primary);
+            color: var(--bg-dark);
+        }
+
+        .btn-danger {
+            background: rgba(255, 68, 102, 0.15);
+            color: var(--danger);
+            border: 1px solid rgba(255, 68, 102, 0.3);
+        }
+
+        .btn-danger:hover {
+            background: rgba(255, 68, 102, 0.25);
+        }
+
+        /* API Key Styling */
+        .api-key-display {
+            font-family: 'JetBrains Mono', 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 13px;
+            padding: 14px 18px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            border-radius: 10px;
+            word-break: break-all;
+            transition: all 0.2s ease;
+        }
+
+        .api-key-display:hover {
+            border-color: rgba(0, 255, 255, 0.3);
+        }
+
+        .api-key-display.blur {
+            filter: blur(4px);
+        }
+
+        .api-key-display.blur:hover {
+            filter: blur(0);
+        }
+
+        /* Code blocks */
+        pre {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            border-radius: 12px;
+            padding: 24px;
+            overflow-x: auto;
+            margin: 0;
+            border: 1px solid #475569;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        code {
+            color: #f1f5f9;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        /* Nav Tabs */
+        .nav-tabs {
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 20px;
+        }
+
+        .nav-tabs .nav-link {
+            border: none;
+            border-radius: 8px 8px 0 0;
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #64748b;
+            margin-right: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tabs .nav-link.active {
+            background: white;
+            color: #06b6d4;
+            border-bottom: 3px solid #06b6d4;
+        }
+
+        /* Alert */
+        .alert {
+            border-radius: 12px;
+            padding: 16px 20px;
+            border: none;
+            margin-bottom: 24px;
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .alert-info i {
+            margin-right: 8px;
+        }
+
+        /* Stats Cards */
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 24px;
+        }
+
+        .stat-card-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .stat-card-icon i {
+            font-size: 24px;
+            color: white;
+        }
+
+        .stat-card-label {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .stat-card-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .stat-card-value.text-success {
+            color: #10b981;
+        }
+
+        .stat-card-value.text-warning {
+            color: #f59e0b;
+        }
+
+        /* Sidebar Responsive */
+        @media (max-width: 991px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                min-height: auto;
+                padding: 16px;
+            }
+
+            .sidebar-header {
+                margin-bottom: 16px;
+                padding-bottom: 16px;
+            }
+
+            .nav.flex-column {
+                flex-direction: row !important;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .nav-link {
+                margin-bottom: 0;
+                padding: 10px 14px;
+                font-size: 13px;
+            }
+
+            .nav-link::before {
+                display: none;
+            }
+
+            .nav-link.mt-4 {
+                margin-top: 0 !important;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .sidebar-brand-icon {
+                width: 40px;
+                height: 40px;
+            }
+
+            .sidebar-brand-icon i {
+                font-size: 18px;
+            }
+
+            .sidebar-title {
+                font-size: 15px;
+            }
+
+            .nav-link {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+
+            .nav-link i {
+                font-size: 14px;
+            }
+
+            .page-title {
+                font-size: 20px;
+            }
+
+            .card-body {
+                padding: 20px;
+            }
+
+            .stat-card {
+                padding: 20px;
+            }
+
+            .stat-card-value {
+                font-size: 24px;
+            }
+        }
+
+        /* Container fix */
+        .container-fluid {
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .row {
+            margin: 0;
+        }
+
+        html, body {
+            overflow-x: hidden;
+            max-width: 100vw;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <div class="sidebar-brand">
+                        <div class="sidebar-brand-icon">
+                            <img src="{{ url_for('static', filename='logo.png') }}" alt="AIPG Logo" style="width: 32px; height: 32px; object-fit: contain;">
+                        </div>
+                        <div>
+                            <div class="sidebar-title">用户门户</div>
+                            <div class="sidebar-subtitle">API 代理网关</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="user-info">
+                    <i class="bi bi-person-circle"></i>
+                    <div class="username">{{ user.username }}</div>
+                </div>
+
+                <div class="nav flex-column">
+                    <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#overview">
+                        <i class="bi bi-bar-chart"></i> 资源概览
+                    </button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#keys">
+                        <i class="bi bi-key"></i> 我的 API 密钥
+                    </button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#logs">
+                        <i class="bi bi-history"></i> 调用日志
+                    </button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#api-docs">
+                        <i class="bi bi-code"></i> 调用示例
+                    </button>
+                    <a href="/playground" class="nav-link text-warning">
+                        <i class="bi bi-rocket"></i> 🔥 在线 API 调试中心
+                    </a>
+                    <a href="/logout" class="nav-link text-danger mt-4">
+                        <i class="bi bi-box-arrow-right"></i> 退出登录
+                    </a>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content tab-content">
+                <!-- Overview Tab -->
+                <div class="tab-pane fade show active" id="overview">
+                    <div class="page-header">
+                        <h1 class="page-title">资源消耗概览</h1>
+                        <p class="page-subtitle">查看您的 API 配额使用情况</p>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="bi bi-tokens"></i> Token 额度使用</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="progress-container">
+                                        <div class="progress-label">
+                                            <span>已使用</span>
+                                            <span class="used">{{ user.quota_used }}</span>
+                                            <span class="total">/ {{ user.quota_total }}</span>
+                                        </div>
+                                        <div class="progress-bar-container">
+                                            {% set p_width = (user.quota_used / user.quota_total * 100) if user.quota_total > 0 else 0 %}
+                                            {% set p_color = 'bg-danger' if user.quota_used >= user.quota_total else ('bg-warning' if p_width > 80 else 'bg-success') %}
+                                            <div class="progress-bar {{ p_color }}" style="width: {{ p_width }}%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="text-center p-4 bg-success/10 rounded-xl">
+                                                    <div class="text-2xl font-bold text-success">{% set remaining = user.quota_total - user.quota_used %}{% if remaining > 0 %}{{ remaining }}{% else %}0{% endif %}</div>
+                                                    <div class="text-sm text-gray-600">剩余额度</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="text-center p-4 bg-info/10 rounded-xl">
+                                                    <div class="text-2xl font-bold text-info">{{ user.rpm }}</div>
+                                                    <div class="text-sm text-gray-600">RPM 限制</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="text-center p-4 bg-warning/10 rounded-xl">
+                                                    <div class="text-2xl font-bold text-warning">{{ user.tpm }}</div>
+                                                    <div class="text-sm text-gray-600">TPM 限制</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="stat-card">
+                                <div class="stat-card-icon">
+                                    <i class="bi bi-shield-check"></i>
+                                </div>
+                                <div class="stat-card-label">账号状态</div>
+                                <div class="stat-card-value">
+                                    <span class="badge bg-success">{{ user.status }}</span>
+                                </div>
+                            </div>
+
+                            <div class="stat-card">
+                                <div class="stat-card-icon">
+                                    <i class="bi bi-clock"></i>
+                                </div>
+                                <div class="stat-card-label">过期时间</div>
+                                <div class="stat-card-value text-success">
+                                    {% if user.expires_at %}
+                                    {{ user.expires_at[:10] }}
+                                    {% else %}
+                                    永久有效
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- API Keys Tab -->
+                <div class="tab-pane fade" id="keys">
+                    <div class="page-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <h1 class="page-title">专属 API 密钥</h1>
+                            <p class="page-subtitle">管理您的 API 访问密钥</p>
+                        </div>
+                        <form method="POST" action="/user/apikey/generate">
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-plus-circle"></i> 签发新密钥
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>API 密钥</th>
+                                        <th>状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for keyObj in api_keys %}
+                                    <tr>
+                                        <td>
+                                            <div class="api-key-display blur">{{ keyObj.key }}</div>
+                                        </td>
+                                        <td>
+                                            <span class="badge {% if keyObj.is_active %}bg-success{% else %}bg-danger{% endif %}">
+                                                {{ '激活生效中' if keyObj.is_active else '已拦截/吊销' }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-outline-primary btn-sm" onclick="copyKey('{{ keyObj.key }}')">
+                                                <i class="bi bi-copy"></i> 复制
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Logs Tab -->
+                <div class="tab-pane fade" id="logs">
+                    <div class="page-header">
+                        <h1 class="page-title">调用日志</h1>
+                        <p class="page-subtitle">查看您的 API 请求历史记录</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>请求时间</th>
+                                        <th>服务商</th>
+                                        <th>状态码</th>
+                                        <th>消耗 Tokens</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for log in logs %}
+                                    <tr>
+                                        <td>{{ log.time_str }}</td>
+                                        <td>{{ log.provider }}</td>
+                                        <td>
+                                            <span class="badge {% if log.status_code == 200 %}bg-success{% else %}bg-danger{% endif %}">
+                                                {{ log.status_code }}
+                                            </span>
+                                        </td>
+                                        <td>{{ log.tokens_estimated }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- API Docs Tab -->
+                <div class="tab-pane fade" id="api-docs">
+                    <div class="page-header">
+                        <h1 class="page-title">已接入服务区与调用示例</h1>
+                        <p class="page-subtitle">使用以下代码示例接入 API</p>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        <strong>全局代理网关地址:</strong> 
+                        <code class="fs-5 ms-2">http://127.0.0.1:8888/v1</code>
+                        <p class="mt-2 mb-0">无论后端接入多少模型通道，您只需将 Base URL 替换为上方地址即可。</p>
+                    </div>
+
+                    <div class="row">
+                        {% for p in providers %}
+                        {% if p.enabled %}
+                        <div class="col-md-12 mb-4">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="bi bi-cloud text-primary"></i>
+                                        <h5 class="mb-0">{{ p.name }}</h5>
+                                    </div>
+                                    <span class="badge bg-info">已接入</span>
+                                </div>
+                                <div class="card-body">
+                                    <p class="text-muted mb-3">当您想要调用 {{ p.name }} 提供的模型时，可以直接向本平台发起请求，修改对应 <code>model</code> 参数即可完成引流。</p>
+                                    <ul class="nav nav-tabs" id="tabuser-{{ loop.index }}">
+                                        <li class="nav-item">
+                                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#pythonuser-{{ loop.index }}">Python</button>
+                                        </li>
+                                        <li class="nav-item">
+                                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#curluser-{{ loop.index }}">cURL</button>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content mt-3">
+                                        <div class="tab-pane fade show active" id="pythonuser-{{ loop.index }}">
+<pre><code>import requests
+
+url = "http://127.0.0.1:8888/v1/chat/completions"
+headers = {
+    "Authorization": "Bearer &lt;填入您的 API 密钥&gt;",
+    "Content-Type": "application/json"
+}
+data = {
+    "model": "gpt-3.5-turbo",
+    "messages": [{"role": "user", "content": "你好！"}]
+}
+response = requests.post(url, headers=headers, json=data)
+print(response.json())</code></pre>
+                                        </div>
+                                        <div class="tab-pane fade" id="curluser-{{ loop.index }}">
+<pre><code>curl -X POST "http://127.0.0.1:8888/v1/chat/completions" \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Bearer &lt;填入您的 API 密钥&gt;" \
+     -d '{
+        "model": "gpt-3.5-turbo",
+        "messages": [{"role": "user", "content": "你好！"}]
+     }'</code></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function copyKey(key) {
+            navigator.clipboard.writeText(key).then(() => {
+                alert('密钥已复制到剪贴板！');
+            });
+        }
+    </script>
+</body>
+</html>

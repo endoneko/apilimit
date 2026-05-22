@@ -1,0 +1,31 @@
+{
+  "routes": [
+    {
+      "path": "/v1/chat/completions",
+      "provider": "custom_ad02fec8",
+      "method": "POST",
+      "transform": {
+        "request": {
+          "map_fields": {
+            "model": "model",
+            "messages": "messages"
+          },
+          "add_headers": {
+            "X-Proxy-Version": "1.0"
+          }
+        }
+      }
+    }
+  ],
+  "local_config": {
+    "host": "0.0.0.0",
+    "port": 8888,
+    "debug": true
+  },
+  "ngrok_config": {
+    "authtoken": "38HuY8vxM72RjimDdxTzvDlDWkD_kfUVcdaGuC4ycoWhHYT5",
+    "region": "us",
+    "subdomain": "my-ai-proxy",
+    "bind_tls": true
+  }
+}

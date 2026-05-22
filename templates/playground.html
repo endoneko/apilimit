@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIPG - API调试中心</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --primary-glow: rgba(99, 102, 241, 0.25);
+            --secondary: #06b6d4;
+            --secondary-glow: rgba(6, 182, 212, 0.2);
+            --accent: #f43f5e;
+            --bg-dark: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-hover: #f1f5f9;
+            --bg-gradient-start: #f0f4ff;
+            --bg-gradient-end: #e0e7ff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --border-color: #e2e8f0;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --purple: #8b5cf6;
+            --pink: #ec4899;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+            --shadow-glow: 0 0 40px -10px var(--primary-glow);
+            --radius-sm: 8px;
+            --radius: 12px;
+            --radius-md: 16px;
+            --radius-lg: 20px;
+            --radius-xl: 24px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 50%, #f8fafc 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar - Glassmorphism */
+        .sidebar {
+            min-height: 100vh;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: var(--text-primary);
+            padding: 24px 16px;
+            position: fixed;
+            width: 260px;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            z-index: 1000;
+            border-right: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: var(--shadow-lg), 0 0 60px -20px rgba(99, 102, 241, 0.15);
+        }
+
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 28px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .sidebar-brand-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-md), 0 0 30px var(--primary-glow);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-brand-icon::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            transform: rotate(45deg);
+            transition: all 0.6s;
+            opacity: 0;
+        }
+
+        .sidebar-brand-icon:hover::before {
+            opacity: 1;
+            transform: rotate(45deg) translate(50%, 50%);
+        }
+
+        .sidebar-brand-icon:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: var(--shadow-lg), 0 0 40px var(--primary-glow);
+        }
+
+        .sidebar-brand-icon img {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+
+        .sidebar-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.3px;
+        }
+
+        .sidebar-subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            margin-bottom: 4px;
+            border-radius: var(--radius);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%) scaleY(0);
+            height: 60%;
+            width: 4px;
+            background: linear-gradient(180deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 0 4px 4px 0;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-link:hover {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(6, 182, 212, 0.04) 100%);
+            color: var(--primary);
+            transform: translateX(4px);
+        }
+
+        .nav-link:hover::before {
+            transform: translateY(-50%) scaleY(1);
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(6, 182, 212, 0.08) 100%);
+            color: var(--primary);
+            font-weight: 600;
+            box-shadow: inset 0 0 20px rgba(99, 102, 241, 0.1);
+        }
+
+        .nav-link.active::before {
+            transform: translateY(-50%) scaleY(1);
+        }
+
+        .nav-link i {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .nav-link.text-danger {
+            color: var(--danger);
+        }
+
+        .nav-link.text-danger:hover {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(244, 63, 94, 0.04) 100%);
+            color: var(--danger);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            padding: 32px 40px;
+            min-height: 100vh;
+            overflow-x: hidden;
+            max-width: calc(100vw - 260px);
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .quota-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            background: rgba(16, 185, 129, 0.13);
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #10b981;
+        }
+
+        .quota-badge i {
+            font-size: 12px;
+        }
+
+        /* Panel Container */
+        .panel-container {
+            display: none;
+        }
+
+        .panel-container.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Chat Layout */
+        .chat-layout {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 24px;
+            height: calc(100vh - 200px);
+            min-height: 500px;
+        }
+
+        /* Config Panel */
+        .config-panel {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            padding: 24px;
+            overflow-y: auto;
+            box-shadow: var(--shadow-md);
+        }
+
+        .config-section {
+            margin-bottom: 28px;
+        }
+
+        .config-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title i {
+            font-size: 14px;
+            color: var(--primary);
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .form-select,
+        .form-control {
+            width: 100%;
+            padding: 12px 14px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-select:focus,
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        .form-select option {
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+
+        /* Range Controls */
+        .range-group {
+            margin-bottom: 20px;
+        }
+
+        .range-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .range-header span:last-child {
+            color: var(--primary);
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-weight: 600;
+        }
+
+        .range-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .range-wrapper input[type="range"] {
+            flex-grow: 1;
+            height: 6px;
+            background: var(--border-color);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .range-wrapper input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .range-wrapper input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+
+        .range-wrapper input[type="number"] {
+            width: 70px;
+            padding: 8px 10px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .range-wrapper input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Toggle Switch */
+        .toggle-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            background: var(--bg-hover);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            margin-bottom: 12px;
+        }
+
+        .toggle-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toggle-label i {
+            font-size: 16px;
+            color: var(--primary);
+        }
+
+        .form-switch {
+            margin-bottom: 0;
+            padding-left: 0;
+        }
+
+        .form-switch .form-check-input {
+            width: 44px;
+            height: 24px;
+            margin-left: 0;
+            background-color: var(--border-color);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            position: relative;
+            transition: background-color 0.3s ease;
+        }
+
+        .form-switch .form-check-input:checked {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        }
+
+        .form-switch .form-check-input:focus {
+            box-shadow: none;
+        }
+
+        .form-switch .form-check-input::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-switch .form-check-input:checked::after {
+            transform: translateX(20px);
+        }
+
+        /* Chat Area */
+        .chat-area {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .chat-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+
+        .chat-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chat-title i {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+        }
+
+        .chat-title h4 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .chat-subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .chat-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border-radius: var(--radius);
+            font-weight: 500;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .btn-outline-secondary {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .btn-outline-secondary:hover {
+            background: var(--bg-hover);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Chat History */
+        .chat-history {
+            flex-grow: 1;
+            padding: 24px;
+            overflow-y: auto;
+            background: var(--bg-card);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+            margin: 0;
+        }
+
+        /* Messages */
+        .message {
+            margin-bottom: 24px;
+            max-width: 85%;
+        }
+
+        .message.user {
+            margin-left: auto;
+        }
+
+        .message.assistant {
+            margin-right: auto;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .message.user .message-avatar {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        }
+
+        .message.assistant .message-avatar {
+            background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+        }
+
+        .message-author {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .message-time {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .bubble {
+            padding: 16px 20px;
+            border-radius: 16px;
+            font-size: 14px;
+            line-height: 1.6;
+            word-wrap: break-word;
+        }
+
+        .message.user .bubble {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.assistant .bubble {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-bottom-left-radius: 4px;
+        }
+
+        /* Chat Input */
+        .chat-input-area {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border-color);
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        .chat-input-area textarea {
+            flex-grow: 1;
+            min-height: 60px;
+            max-height: 200px;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            font-size: 14px;
+            line-height: 1.5;
+            resize: none;
+            transition: all 0.3s ease;
+        }
+
+        .chat-input-area textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        .chat-input-area textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+            padding: 12px 24px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            transform: none;
+            cursor: not-allowed;
+        }
+
+        /* Error Message */
+        .error-message {
+            color: var(--danger);
+            font-size: 12px;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Loading State */
+        .spinner-border {
+            width: 16px;
+            height: 16px;
+            border-width: 2px;
+        }
+
+        /* History Panel */
+        .history-list {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            padding: 24px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .history-item {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-item:hover {
+            background: var(--bg-hover);
+            border-radius: var(--radius);
+        }
+
+        .history-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .history-item-model {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .history-item-time {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .history-item-preview {
+            font-size: 14px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .chat-layout {
+                grid-template-columns: 280px 1fr;
+            }
+        }
+
+        @media (max-width: 991px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                min-height: auto;
+                padding: 16px;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+                max-width: 100vw;
+            }
+
+            .chat-layout {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+
+            .config-panel {
+                max-height: 400px;
+            }
+
+            .nav.flex-column {
+                flex-direction: row !important;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .nav-link {
+                width: auto;
+                flex: 1;
+                min-width: 140px;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .page-title {
+                font-size: 24px;
+            }
+
+            .chat-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .chat-actions {
+                width: 100%;
+            }
+
+            .chat-actions .btn {
+                flex: 1;
+                justify-content: center;
+            }
+
+            .chat-input-area {
+                flex-direction: column;
+            }
+
+            .chat-input-area textarea {
+                width: 100%;
+            }
+
+            .btn-primary {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .sidebar-brand-icon {
+                width: 40px;
+                height: 40px;
+            }
+
+            .nav-link {
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+
+            .page-title {
+                font-size: 20px;
+            }
+
+            .message {
+                max-width: 95%;
+            }
+        }
+
+        /* Prevent horizontal overflow */
+        html, body {
+            overflow-x: hidden;
+            max-width: 100vw;
+        }
+
+        .main-content {
+            max-width: calc(100vw - 260px);
+        }
+
+        @media (max-width: 991px) {
+            .main-content {
+                max-width: 100vw;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <div class="sidebar-brand">
+                        <div class="sidebar-brand-icon">
+                            <img src="{{ url_for('static', filename='logo.png') }}" alt="AIPG Logo">
+                        </div>
+                    </div>
+                    <div class="sidebar-title">API 调试中心</div>
+                    <div class="sidebar-subtitle">在线测试平台</div>
+                </div>
+
+                <div class="nav flex-column">
+                    <button class="nav-link active" onclick="switchPanel('chat')">
+                        <i class="bi bi-chat-dots"></i> 对话调试
+                    </button>
+                    <button class="nav-link" onclick="switchPanel('config')">
+                        <i class="bi bi-gear"></i> API 配置
+                    </button>
+                    <button class="nav-link" onclick="switchPanel('history')">
+                        <i class="bi bi-clock-history"></i> 历史记录
+                    </button>
+                    <a href="{% if user.role == 'admin' %}/admin{% else %}/user{% endif %}" class="nav-link">
+                        <i class="bi bi-house-door"></i> 返回控制台
+                    </a>
+                    <a href="/logout" class="nav-link text-danger mt-4">
+                        <i class="bi bi-box-arrow-right"></i> 退出登录
+                    </a>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Chat Panel -->
+                <div id="chat-panel" class="panel-container active">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">API 对话调试</h1>
+                            <p class="page-subtitle">测试各种大模型 API 的响应效果</p>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <span class="quota-badge">
+                                <i class="bi bi-tokens"></i>
+                                {% set remaining = user.quota_total - user.quota_used %}
+                                {% if remaining > 0 %}{{ remaining }}{% else %}0{% endif %} 剩余
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="chat-layout">
+                        <!-- Config Sidebar -->
+                        <div class="config-panel">
+                            <div class="config-section">
+                                <div class="section-title">
+                                    <i class="bi bi-gear"></i> API 配置
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="bi bi-key"></i> API 密钥 <span style="color: var(--danger)">*</span>
+                                    </label>
+                                    <select id="api-key-select" class="form-select">
+                                        {% for keyObj in api_keys %}
+                                            {% if keyObj.is_active %}
+                                            <option value="{{ keyObj.key }}">{{ keyObj.key[:12] }}... (可用)</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                    {% if not api_keys %}
+                                    <div class="error-message">
+                                        <i class="bi bi-exclamation-circle"></i> 无可用密钥，请先回控制台生成！
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="bi bi-cpu"></i> 模型选择 <span style="color: var(--danger)">*</span>
+                                    </label>
+                                    <select id="model-select" class="form-select">
+                                        {% for model in models %}
+                                        <option value="{{ model.name }}">{{ model.name }} {% if model.is_pattern %}(通配符 - {{ model.provider }}){% else %}({{ model.provider }}){% endif %}</option>
+                                        {% endfor %}
+                                        {% if not models %}
+                                        <option value="gpt-3.5-turbo">gpt-3.5-turbo (默认)</option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="config-section">
+                                <div class="section-title">
+                                    <i class="bi bi-sliders"></i> 参数调节
+                                </div>
+
+                                <div class="range-group">
+                                    <div class="range-header">
+                                        <span>max_tokens</span>
+                                        <span id="num-maxtokens-value">4096</span>
+                                    </div>
+                                    <div class="range-wrapper">
+                                        <input type="range" id="param-maxtokens" min="1" max="8192" value="4096">
+                                        <input type="number" id="num-maxtokens" value="4096">
+                                    </div>
+                                </div>
+
+                                <div class="range-group">
+                                    <div class="range-header">
+                                        <span>temperature</span>
+                                        <span id="num-temp-value">0.5</span>
+                                    </div>
+                                    <div class="range-wrapper">
+                                        <input type="range" id="param-temp" min="0" max="2" step="0.1" value="0.5">
+                                        <input type="number" id="num-temp" value="0.5" step="0.1">
+                                    </div>
+                                </div>
+
+                                <div class="range-group">
+                                    <div class="range-header">
+                                        <span>top_p</span>
+                                        <span id="num-topp-value">1.0</span>
+                                    </div>
+                                    <div class="range-wrapper">
+                                        <input type="range" id="param-topp" min="0" max="1" step="0.01" value="1.0">
+                                        <input type="number" id="num-topp" value="1.0" step="0.01">
+                                    </div>
+                                </div>
+
+                                <div class="toggle-group">
+                                    <label class="toggle-label">
+                                        <i class="bi bi-chat-dots"></i> 多轮对话
+                                    </label>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="multi-turn-switch" checked>
+                                    </div>
+                                </div>
+
+                                <div class="toggle-group">
+                                    <label class="toggle-label">
+                                        <i class="bi bi-stream"></i> 流式响应
+                                    </label>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="stream-switch" checked>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chat Area -->
+                        <div class="chat-area">
+                            <div class="chat-header">
+                                <div class="chat-title">
+                                    <i class="bi bi-robot"></i>
+                                    <div>
+                                        <h4>AI 助手</h4>
+                                        <div class="chat-subtitle">调试中心支持各种大模型相关能力的效果调试</div>
+                                    </div>
+                                </div>
+                                <div class="chat-actions">
+                                    <button class="btn btn-outline-secondary" onclick="clearHistory()">
+                                        <i class="bi bi-trash"></i> 清除记录
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="chat-history" id="chat-history">
+                                <div class="empty-state" id="empty-state">
+                                    <i class="bi bi-chat-left-text"></i>
+                                    <p>暂无对话记录，请在下方输入内容开始测试。</p>
+                                </div>
+                            </div>
+
+                            <div class="chat-input-area">
+                                <textarea
+                                    id="user-input"
+                                    rows="2"
+                                    placeholder="在此输入您想了解的内容，Shift+Enter换行"
+                                ></textarea>
+                                <button class="btn btn-primary" id="send-btn" onclick="sendMessage()">
+                                    <i class="bi bi-send"></i> 发送
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Config Panel -->
+                <div id="config-panel" class="panel-container">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">API 配置详情</h1>
+                            <p class="page-subtitle">查看和管理 API 配置信息</p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="config-panel">
+                                <div class="section-title">
+                                    <i class="bi bi-key"></i> 当前 API 密钥
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">已选密钥</label>
+                                    <input type="text" class="form-control" id="config-api-key-display" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">密钥状态</label>
+                                    <span class="badge bg-success">可用</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+                            <div class="config-panel">
+                                <div class="section-title">
+                                    <i class="bi bi-cpu"></i> 当前模型
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">已选模型</label>
+                                    <input type="text" class="form-control" id="config-model-display" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">模型提供商</label>
+                                    <span class="badge bg-primary" id="config-provider-display">-</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="config-panel">
+                                <div class="section-title">
+                                    <i class="bi bi-sliders"></i> 当前参数设置
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="form-label">max_tokens</label>
+                                            <input type="text" class="form-control" id="config-maxtokens-display" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="form-label">temperature</label>
+                                            <input type="text" class="form-control" id="config-temp-display" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="form-label">top_p</label>
+                                            <input type="text" class="form-control" id="config-topp-display" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label">多轮对话</label>
+                                            <input type="text" class="form-control" id="config-multiturn-display" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label">流式响应</label>
+                                            <input type="text" class="form-control" id="config-stream-display" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- History Panel -->
+                <div id="history-panel" class="panel-container">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">历史记录</h1>
+                            <p class="page-subtitle">查看您的 API 调用历史</p>
+                        </div>
+                        <button class="btn btn-outline-secondary" onclick="clearAllHistory()">
+                            <i class="bi bi-trash"></i> 清空历史
+                        </button>
+                    </div>
+
+                    <div class="history-list" id="history-list">
+                        <div class="empty-state">
+                            <i class="bi bi-clock-history"></i>
+                            <p>暂无历史记录</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let messageHistory = [];
+        let chatHistory = [];
+
+        // Panel Switching
+        function switchPanel(panelName) {
+            // Hide all panels
+            document.querySelectorAll('.panel-container').forEach(panel => {
+                panel.classList.remove('active');
+            });
+
+            // Show selected panel
+            document.getElementById(panelName + '-panel').classList.add('active');
+
+            // Update nav links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.target.closest('.nav-link').classList.add('active');
+
+            // Update config display if config panel
+            if (panelName === 'config') {
+                updateConfigDisplay();
+            }
+
+            // Update history display if history panel
+            if (panelName === 'history') {
+                updateHistoryDisplay();
+            }
+        }
+
+        // Update Config Display
+        function updateConfigDisplay() {
+            const apiKey = document.getElementById('api-key-select').value;
+            const model = document.getElementById('model-select').value;
+            const maxTokens = document.getElementById('num-maxtokens').value;
+            const temp = document.getElementById('num-temp').value;
+            const topP = document.getElementById('num-topp').value;
+            const multiTurn = document.getElementById('multi-turn-switch').checked;
+            const stream = document.getElementById('stream-switch').checked;
+
+            document.getElementById('config-api-key-display').value = apiKey ? apiKey.substring(0, 12) + '...' : '未选择';
+            document.getElementById('config-model-display').value = model || '未选择';
+            document.getElementById('config-maxtokens-display').value = maxTokens;
+            document.getElementById('config-temp-display').value = temp;
+            document.getElementById('config-topp-display').value = topP;
+            document.getElementById('config-multiturn-display').value = multiTurn ? '已启用' : '已禁用';
+            document.getElementById('config-stream-display').value = stream ? '已启用' : '已禁用';
+
+            // Try to extract provider from model select
+            const modelSelect = document.getElementById('model-select');
+            const selectedOption = modelSelect.options[modelSelect.selectedIndex];
+            if (selectedOption) {
+                const text = selectedOption.text;
+                const match = text.match(/\(([^)]+)\)/);
+                document.getElementById('config-provider-display').textContent = match ? match[1] : '默认';
+            }
+        }
+
+        // Update History Display
+        function updateHistoryDisplay() {
+            const historyList = document.getElementById('history-list');
+            if (chatHistory.length === 0) {
+                historyList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="bi bi-clock-history"></i>
+                        <p>暂无历史记录</p>
+                    </div>
+                `;
+                return;
+            }
+
+            historyList.innerHTML = chatHistory.map((item, index) => `
+                <div class="history-item">
+                    <div class="history-item-header">
+                        <span class="history-item-model">${item.model}</span>
+                        <span class="history-item-time">${item.time}</span>
+                    </div>
+                    <div class="history-item-preview">${item.preview}</div>
+                </div>
+            `).join('');
+        }
+
+        // Clear All History
+        function clearAllHistory() {
+            chatHistory = [];
+            updateHistoryDisplay();
+        }
+
+        // UI Helpers for sliders
+        function updateNumDisplay(id, value) {
+            document.getElementById(id).textContent = value;
+        }
+
+        document.getElementById('param-maxtokens').addEventListener('input', function(e) {
+            document.getElementById('num-maxtokens').value = e.target.value;
+            updateNumDisplay('num-maxtokens-value', e.target.value);
+        });
+
+        document.getElementById('num-maxtokens').addEventListener('input', function(e) {
+            document.getElementById('param-maxtokens').value = e.target.value;
+            updateNumDisplay('num-maxtokens-value', e.target.value);
+        });
+
+        document.getElementById('param-temp').addEventListener('input', function(e) {
+            document.getElementById('num-temp').value = e.target.value;
+            updateNumDisplay('num-temp-value', e.target.value);
+        });
+
+        document.getElementById('num-temp').addEventListener('input', function(e) {
+            document.getElementById('param-temp').value = e.target.value;
+            updateNumDisplay('num-temp-value', e.target.value);
+        });
+
+        document.getElementById('param-topp').addEventListener('input', function(e) {
+            document.getElementById('num-topp').value = e.target.value;
+            updateNumDisplay('num-topp-value', e.target.value);
+        });
+
+        document.getElementById('num-topp').addEventListener('input', function(e) {
+            document.getElementById('param-topp').value = e.target.value;
+            updateNumDisplay('num-topp-value', e.target.value);
+        });
+
+        // Chat logic
+        function clearHistory() {
+            messageHistory = [];
+            document.getElementById('chat-history').innerHTML = `
+                <div class="empty-state" id="empty-state">
+                    <i class="bi bi-chat-left-text"></i>
+                    <p>已清除，请在下方输入内容重新开始。</p>
+                </div>
+            `;
+        }
+
+        document.getElementById('user-input').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        function appendMessage(role, text) {
+            const chatBox = document.getElementById('chat-history');
+            const emptyState = document.getElementById('empty-state');
+            if (emptyState) emptyState.remove();
+
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${role}`;
+
+            msgDiv.innerHTML = `
+                <div class="message-header">
+                    <div class="message-avatar">${role === 'user' ? 'Me' : 'AI'}</div>
+                    <span class="message-author">${role === 'user' ? '我' : 'AI 助手'}</span>
+                    <span class="message-time">${timeStr}</span>
+                </div>
+                <div class="bubble">${text}</div>
+            `;
+
+            chatBox.appendChild(msgDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            return msgDiv.querySelector('.bubble');
+        }
+
+        async function sendMessage() {
+            const inputEl = document.getElementById('user-input');
+            const apiKey = document.getElementById('api-key-select').value;
+            const model = document.getElementById('model-select').value;
+            const text = inputEl.value.trim();
+            const btn = document.getElementById('send-btn');
+            const streamEnabled = document.getElementById('stream-switch').checked;
+
+            if (!text) return;
+            if (!apiKey) {
+                alert("请先生成并选择API密钥！");
+                return;
+            }
+
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+
+            appendMessage('user', text);
+            inputEl.value = '';
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 发送中...';
+
+            const multiTurn = document.getElementById('multi-turn-switch').checked;
+            if (!multiTurn) messageHistory = [];
+            messageHistory.push({ role: "user", content: text });
+
+            const max_tokens = parseInt(document.getElementById('num-maxtokens').value);
+            const temperature = parseFloat(document.getElementById('num-temp').value);
+            const top_p = parseFloat(document.getElementById('num-topp').value);
+
+            try {
+                const response = await fetch('/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: model,
+                        messages: messageHistory,
+                        max_tokens: max_tokens,
+                        temperature: temperature,
+                        top_p: top_p,
+                        stream: streamEnabled
+                    })
+                });
+
+                if (response.ok) {
+                    if (streamEnabled && response.body) {
+                        const reader = response.body.getReader();
+                        const decoder = new TextDecoder('utf-8');
+                        const assistantBubble = appendMessage('assistant', '');
+                        let fullResponse = '';
+
+                        while (true) {
+                            const { done, value } = await reader.read();
+                            if (done) break;
+
+                            const chunk = decoder.decode(value);
+                            const lines = chunk.split('\n').filter(line => line.trim() !== '');
+
+                            for (const line of lines) {
+                                if (line.startsWith('data: ')) {
+                                    const data = line.substring(6);
+                                    if (data === '[DONE]') continue;
+                                    try {
+                                        const json = JSON.parse(data);
+                                        const content = json.choices?.[0]?.delta?.content;
+                                        if (content) {
+                                            fullResponse += content;
+                                            assistantBubble.textContent = fullResponse;
+                                        }
+                                    } catch (e) {
+                                        console.error('Parse error:', e);
+                                    }
+                                }
+                            }
+                        }
+                        messageHistory.push({ role: "assistant", content: fullResponse });
+
+                        // Add to history
+                        chatHistory.unshift({
+                            model: model,
+                            time: timeStr,
+                            preview: text.substring(0, 50) + (text.length > 50 ? '...' : '')
+                        });
+                    } else {
+                        const data = await response.json();
+                        const replyInfo = data.error || (data.choices && data.choices[0] && data.choices[0].message.content) || "代理转发：第三方无明确返回";
+                        appendMessage('assistant', replyInfo);
+                        messageHistory.push({ role: "assistant", content: replyInfo });
+
+                        // Add to history
+                        chatHistory.unshift({
+                            model: model,
+                            time: timeStr,
+                            preview: text.substring(0, 50) + (text.length > 50 ? '...' : '')
+                        });
+                    }
+                } else {
+                    const errData = await response.json();
+                    appendMessage('assistant', "[系统错误]: " + (errData.error || response.statusText));
+                }
+            } catch (err) {
+                appendMessage('assistant', "[网络错误]: 无法连接到后台代理 - " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-send"></i> 发送';
+            }
+        }
+    </script>
+</body>
+</html>

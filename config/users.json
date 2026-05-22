@@ -1,0 +1,54 @@
+{
+  "users": [
+    {
+      "id": "admin_001",
+      "username": "endoneko",
+      "password": "endoneko",
+      "role": "admin",
+      "status": "active",
+      "quota": {
+        "total": 999999999,
+        "used": 0,
+        "reset_day": 1
+      },
+      "rate_limits": {
+        "rpm": 9999,
+        "tpm": 9999999,
+        "concurrent": 100
+      },
+      "allowed_models": [
+        "all"
+      ],
+      "allowed_providers": [
+        "all"
+      ],
+      "ip_whitelist": [],
+      "expires_at": "2099-12-31T23:59:59Z"
+    },
+    {
+      "id": "user_001",
+      "username": "developer1",
+      "password": "user123",
+      "role": "user",
+      "status": "active",
+      "quota": {
+        "total": 1000000,
+        "used": 0,
+        "reset_day": 1
+      },
+      "rate_limits": {
+        "rpm": 60,
+        "tpm": 50000,
+        "concurrent": 5
+      },
+      "allowed_models": [
+        "gpt-3.5-turbo"
+      ],
+      "allowed_providers": [
+        "openai_001"
+      ],
+      "ip_whitelist": [],
+      "expires_at": "2025-12-31T23:59:59Z"
+    }
+  ]
+}

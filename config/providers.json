@@ -1,0 +1,42 @@
+{
+  "providers": [
+    {
+      "id": "custom_ad02fec8",
+      "name": "Ollama Local",
+      "type": "custom",
+      "base_url": "http://192.168.80.26:11434/v1",
+      "api_keys": [
+        {
+          "key": "ollama",
+          "name": "Default Key",
+          "is_active": true
+        }
+      ],
+      "models": [
+        "gemma4:26b"
+      ],
+      "enabled": true,
+      "timeout": 120,
+      "retry_times": 1
+    },
+    {
+      "id": "custom_e0d14e45",
+      "name": "xiaomi",
+      "type": "custom",
+      "base_url": "https://token-plan-cn.xiaomimimo.com/v1",
+      "api_keys": [
+        {
+          "key": "tp-ck17xe7tyjj5f9ze2p8qf5oh3aykh8bhpwagi0kgm6uvyoy7",
+          "name": "Default Key",
+          "is_active": true
+        }
+      ],
+      "models": [
+        "mimo-v2.5-pro",
+        "mimo-v2.5"
+      ],
+      "enabled": true,
+      "created_at": "2026-05-22T11:49:50.921606"
+    }
+  ]
+}

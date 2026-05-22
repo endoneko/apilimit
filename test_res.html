@@ -1,0 +1,288 @@
+200
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>AIPG - API调试中心</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        body { background-color: #f5f7fa; margin: 0; padding: 0; height: 100vh; display: flex; flex-column; }
+        .top-navbar { background-color: #1e293b; color: white; padding: 10px 20px; flex-shrink: 0;}
+        .top-navbar a { color: #cbd5e1; text-decoration: none; margin-right: 20px; font-size: 14px;}
+        .top-navbar a:hover { color: white; }
+        
+        .main-container { flex-grow: 1; display: flex; overflow: hidden; }
+        
+        .sidebar { width: 350px; background-color: white; border-right: 1px solid #e2e8f0; padding: 20px; overflow-y: auto; flex-shrink: 0;}
+        .chat-area { flex-grow: 1; display: flex; flex-direction: column; padding: 20px; background-color: #f8fafc; }
+        
+        /* Slider styling */
+        .param-group { margin-bottom: 25px; }
+        .param-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 14px; font-weight: 500; color: #334155;}
+        .range-wrapper { display: flex; align-items: center; gap: 15px; }
+        .range-wrapper input[type=range] { flex-grow: 1; }
+        .range-wrapper input[type=number] { width: 80px; text-align: center; border: 1px solid #e2e8f0; border-radius: 4px; padding: 4px; }
+        
+        /* Chat box styling */
+        .chat-container { background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; flex-direction: column; flex-grow: 1; overflow: hidden;}
+        .chat-header { padding: 20px; border-bottom: 1px solid #e2e8f0; }
+        .chat-header h4 { margin: 0; color: #0f172a; font-size: 18px; display: flex; align-items: center; gap: 10px;}
+        .chat-header p { margin: 5px 0 0 0; color: #64748b; font-size: 13px; }
+        
+        .chat-history { flex-grow: 1; padding: 20px; overflow-y: auto; background-color: #f8fafc; }
+        
+        .message { margin-bottom: 20px; max-width: 80%; }
+        .message.user { margin-left: auto; }
+        .message.assistant { margin-right: auto; }
+        .bubble { padding: 12px 16px; border-radius: 8px; font-size: 14px; line-height: 1.5; word-wrap: break-word;}
+        .message.user .bubble { background-color: #3b82f6; color: white; border-bottom-right-radius: 2px;}
+        .message.assistant .bubble { background-color: white; color: #1e293b; border: 1px solid #e2e8f0; border-bottom-left-radius: 2px;}
+        
+        .chat-input-area { padding: 20px; background: white; border-top: 1px solid #e2e8f0; position: relative; }
+        textarea.form-control { resize: none; border-radius: 8px; padding-bottom: 40px; border: 1px solid #e2e8f0; box-shadow: none;}
+        textarea.form-control:focus { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+        .send-btn { position: absolute; bottom: 30px; right: 35px; width: 80px;}
+        
+    </style>
+</head>
+<body>
+
+    <!-- Mock Top Navbar -->
+    <div class="top-navbar d-flex justify-content-between align-items-center">
+        <div>
+            <a href="/admin"><i class="bi bi-house-door"></i> 平台首页 / 控制台</a>
+        </div>
+        <div>
+            <a href="#"><i class="bi bi-bell"></i> 消息</a>
+            <a href="#"><i class="bi bi-file-text"></i> 文档中心</a>
+            <span class="text-light ms-3"><i class="bi bi-person-circle"></i> endoneko</span>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <!-- Sidebar (Parameters) -->
+        <div class="sidebar">
+            <h6 class="mb-4 pb-2 border-bottom text-muted">服务认证与配置
+                <a href="#" class="float-end text-decoration-none small text-primary">更多服务信息查询</a>
+            </h6>
+            
+            <div class="param-group">
+                <label class="param-header text-danger">API 密钥 (Auth) *</label>
+                <select id="api-key-select" class="form-select mb-2">
+                    
+                        
+                        <option value="aip_endoneko_key">aip_endone... (可用)</option>
+                        
+                    
+                </select>
+                
+            </div>
+
+            <div class="param-group">
+                <label class="param-header text-danger">模型选择 * <span class="badge text-bg-light fw-normal text-muted">剩余tokens: 999999999</span></label>
+                <select id="model-select" class="form-select">
+                    <!-- Demo models injected from providers -->
+                    <option value="gpt-3.5-turbo">gpt-3.5-turbo (默认)</option>
+                    <option value="gpt-4">gpt-4</option>
+                    <option value="claude-3-haiku-20240307">claude-3-haiku</option>
+                    <option value="claude-3-opus-20240229">claude-3-opus</option>
+                </select>
+            </div>
+
+            <div class="param-group mt-4">
+                <div class="param-header">
+                    <span>max_tokens (回复长度限制) <i class="bi bi-info-circle text-muted"></i></span>
+                </div>
+                <div class="range-wrapper">
+                    <input type="range" id="param-maxtokens" min="1" max="8192" value="4096" oninput="updateNum('num-maxtokens', this.value)">
+                    <div class="input-group input-group-sm w-auto">
+                        <button class="btn btn-outline-secondary" onclick="stepNum('param-maxtokens', 'num-maxtokens', -1)">-</button>
+                        <input type="number" id="num-maxtokens" value="4096" oninput="updateRange('param-maxtokens', this.value)">
+                        <button class="btn btn-outline-secondary" onclick="stepNum('param-maxtokens', 'num-maxtokens', 1)">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="param-group">
+                <div class="param-header">
+                    <span>top-k (灵活度) <i class="bi bi-info-circle text-muted"></i></span>
+                </div>
+                <div class="range-wrapper">
+                    <input type="range" id="param-topk" min="1" max="10" value="4" oninput="updateNum('num-topk', this.value)">
+                    <div class="input-group input-group-sm w-auto">
+                        <button class="btn btn-outline-secondary" onclick="stepNum('param-topk', 'num-topk', -1)">-</button>
+                        <input type="number" id="num-topk" value="4" oninput="updateRange('param-topk', this.value)">
+                        <button class="btn btn-outline-secondary" onclick="stepNum('param-topk', 'num-topk', 1)">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="param-group">
+                <div class="param-header">
+                    <span>temperature (随机性) <i class="bi bi-info-circle text-muted"></i></span>
+                </div>
+                <div class="range-wrapper">
+                    <input type="range" id="param-temp" min="0" max="1" step="0.1" value="0.5" oninput="updateNum('num-temp', this.value)">
+                    <div class="input-group input-group-sm w-auto">
+                        <button class="btn btn-outline-secondary" onclick="stepNum('param-temp', 'num-temp', -0.1)">-</button>
+                        <input type="number" id="num-temp" value="0.5" step="0.1" oninput="updateRange('param-temp', this.value)">
+                        <button class="btn btn-outline-secondary" onclick="stepNum('param-temp', 'num-temp', 0.1)">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="param-group d-flex justify-content-between align-items-center">
+                <span class="param-header mb-0">多轮对话 <i class="bi bi-info-circle text-muted"></i></span>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="multi-turn-switch" checked>
+                </div>
+            </div>
+            
+        </div>
+
+        <!-- Chat Area -->
+        <div class="chat-area">
+            <div class="chat-container">
+                <div class="chat-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4><i class="bi bi-journal-code text-primary"></i> AIPG API调试中心</h4>
+                        <p>调试中心支持各种大模型相关能力的效果调试，通过可视化的参数调整快速验证代理转发效果。</p>
+                    </div>
+                    <div>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="clearHistory()"><i class="bi bi-trash"></i> 清除历史记录</button>
+                    </div>
+                </div>
+
+                <div class="chat-history" id="chat-history">
+                    <!-- Messages will appear here -->
+                    <div class="text-center text-muted mt-5" id="empty-state">
+                        <i class="bi bi-chat-dots fs-1"></i>
+                        <p class="mt-2">暂无对话记录，请在下方输入内容开始测试。</p>
+                    </div>
+                </div>
+
+                <div class="chat-input-area">
+                    <textarea id="user-input" class="form-control" rows="3" placeholder="在此输入您想了解的内容, Shift+Enter换行" onkeydown="handleEnter(event)"></textarea>
+                    <button class="btn btn-primary send-btn" id="send-btn" onclick="sendMessage()"><i class="bi bi-send"></i> 发送</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripting -->
+    <script>
+        let messageHistory = [];
+
+        // UI Helpers for sliders
+        function updateNum(id, val) { document.getElementById(id).value = val; }
+        function updateRange(id, val) { document.getElementById(id).value = val; }
+        function stepNum(rangeId, numId, step) {
+            let el = document.getElementById(numId);
+            let val = parseFloat(el.value) + step;
+            val = Math.max(parseFloat(document.getElementById(rangeId).min), Math.min(parseFloat(document.getElementById(rangeId).max), val));
+            // handle precise decimal for temp
+            if(Number.isInteger(parseFloat(step))) { val = Math.round(val); } else { val = val.toFixed(1); }
+            el.value = val;
+            document.getElementById(rangeId).value = val;
+        }
+
+        // Chat logic
+        function clearHistory() {
+            messageHistory = [];
+            document.getElementById('chat-history').innerHTML = `
+                <div class="text-center text-muted mt-5" id="empty-state">
+                    <i class="bi bi-chat-dots fs-1"></i>
+                    <p class="mt-2">已清除，请在下方输入内容重新开始。</p>
+                </div>
+            `;
+        }
+
+        function handleEnter(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        }
+
+        function appendMessage(role, text) {
+            const chatBox = document.getElementById('chat-history');
+            const emptyState = document.getElementById('empty-state');
+            if (emptyState) emptyState.remove();
+
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${role}`;
+            
+            const bblDiv = document.createElement('div');
+            bblDiv.className = 'bubble';
+            bblDiv.innerText = text;
+            
+            msgDiv.appendChild(bblDiv);
+            chatBox.appendChild(msgDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            return bblDiv; // return block to allow streaming updates
+        }
+
+        async function sendMessage() {
+            const inputEl = document.getElementById('user-input');
+            const apiKey = document.getElementById('api-key-select').value;
+            const model = document.getElementById('model-select').value;
+            const text = inputEl.value.trim();
+            const btn = document.getElementById('send-btn');
+            
+            if (!text) return;
+            if (!apiKey) {
+                alert("请先生成并选择API密钥！");
+                return;
+            }
+
+            // Append User Message
+            appendMessage('user', text);
+            inputEl.value = '';
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+
+            // Build history context if multi-turn is on
+            const multiTurn = document.getElementById('multi-turn-switch').checked;
+            if (!multiTurn) messageHistory = [];
+            messageHistory.push({ role: "user", content: text });
+
+            // Params
+            const max_tokens = parseInt(document.getElementById('num-maxtokens').value);
+            const temperature = parseFloat(document.getElementById('num-temp').value);
+            /* const top_k = parseInt(document.getElementById('num-topk').value); // Openai usually uses top_p, mocked here */
+
+            try {
+                const response = await fetch('/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: model,
+                        messages: messageHistory,
+                        max_tokens: max_tokens,
+                        temperature: temperature
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    let replyInfo = data.error || (data.choices && data.choices[0] && data.choices[0].message.content) || "代理转发：第三方无明确返回";
+                    appendMessage('assistant', replyInfo);
+                    messageHistory.push({ role: "assistant", content: replyInfo });
+                } else {
+                    const errData = await response.json();
+                    appendMessage('assistant', "[系统错误]: " + (errData.error || response.statusText));
+                }
+            } catch (err) {
+                appendMessage('assistant', "[网络错误]: 无法连接到后台代理 - " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-send"></i> 发送';
+            }
+        }
+    </script>
+</body>
+</html>

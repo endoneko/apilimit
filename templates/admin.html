@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIPG - 管理员控制台</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Color Variables - Premium Modern Palette */
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --primary-glow: rgba(99, 102, 241, 0.25);
+            --secondary: #06b6d4;
+            --secondary-glow: rgba(6, 182, 212, 0.2);
+            --accent: #f43f5e;
+            --bg-dark: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-hover: #f1f5f9;
+            --bg-gradient-start: #f0f4ff;
+            --bg-gradient-end: #e0e7ff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --border-color: #e2e8f0;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --purple: #8b5cf6;
+            --pink: #ec4899;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+            --shadow-glow: 0 0 40px -10px var(--primary-glow);
+            --radius-sm: 8px;
+            --radius: 12px;
+            --radius-md: 16px;
+            --radius-lg: 20px;
+            --radius-xl: 24px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 50%, #f8fafc 100%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Sidebar - Premium Glassmorphism */
+        .sidebar {
+            min-height: 100vh;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: var(--text-primary);
+            padding: 24px 16px;
+            position: fixed;
+            width: 260px;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            z-index: 1000;
+            border-right: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: var(--shadow-lg), 0 0 60px -20px rgba(99, 102, 241, 0.15);
+        }
+
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 28px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .sidebar-brand-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-md), 0 0 30px var(--primary-glow);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-brand-icon::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            transform: rotate(45deg);
+            transition: all 0.6s;
+            opacity: 0;
+        }
+
+        .sidebar-brand-icon:hover::before {
+            opacity: 1;
+            transform: rotate(45deg) translate(50%, 50%);
+        }
+
+        .sidebar-brand-icon:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: var(--shadow-lg), 0 0 40px var(--primary-glow);
+        }
+
+        .sidebar-brand-icon i {
+            font-size: 22px;
+            color: #ffffff;
+        }
+
+        .sidebar-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.3px;
+        }
+
+        .sidebar-subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            margin-bottom: 4px;
+            border-radius: var(--radius);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%) scaleY(0);
+            height: 60%;
+            width: 4px;
+            background: linear-gradient(180deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 0 4px 4px 0;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-link:hover {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(6, 182, 212, 0.04) 100%);
+            color: var(--primary);
+            transform: translateX(4px);
+        }
+
+        .nav-link:hover::before {
+            transform: translateY(-50%) scaleY(1);
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(6, 182, 212, 0.08) 100%);
+            color: var(--primary);
+            font-weight: 600;
+            box-shadow: inset 0 0 20px rgba(99, 102, 241, 0.1);
+        }
+
+        .nav-link.active::before {
+            transform: translateY(-50%) scaleY(1);
+        }
+
+        .nav-link.text-warning {
+            color: var(--warning) !important;
+        }
+
+        .nav-link.text-danger {
+            color: var(--danger) !important;
+        }
+
+        .nav-link.text-warning:hover,
+        .nav-link.text-danger:hover {
+            background: var(--bg-hover);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            padding: 32px 40px;
+            min-height: 100vh;
+            overflow-x: hidden;
+            max-width: calc(100vw - 260px);
+        }
+
+        @media (max-width: 991px) {
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+                max-width: 100vw;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .main-content {
+                padding: 16px;
+            }
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .page-subtitle {
+            font-size: 15px;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            background: transparent;
+            padding: 0;
+            margin-bottom: 12px;
+            font-size: 12px;
+        }
+
+        .breadcrumb-item a {
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        .breadcrumb-item a:hover {
+            color: var(--primary);
+        }
+
+        .breadcrumb-item.active {
+            color: var(--text-primary);
+        }
+
+        /* Cards - Premium Design */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(226, 232, 240, 0.6);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin-bottom: 28px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+            border-color: rgba(99, 102, 241, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(135deg, #fafbfc 0%, #f8fafc 100%);
+        }
+
+        .card-header h5 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-header h5 i {
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .card-body {
+            padding: 28px;
+        }
+
+        /* Stats Cards - Premium Design */
+        .stat-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid rgba(226, 232, 240, 0.6);
+            color: var(--text-primary);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.06) 0%, transparent 60%);
+            border-radius: 0 0 0 100%;
+            transition: all 0.4s ease;
+        }
+
+        .stat-card:hover::before {
+            width: 180px;
+            height: 180px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, transparent 60%);
+        }
+
+        .stat-card.bg-success {
+            background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+            border-color: rgba(16, 185, 129, 0.2);
+        }
+
+        .stat-card.bg-success:hover {
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.2);
+            border-color: var(--success);
+        }
+
+        .stat-card.bg-success::before {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, transparent 60%);
+        }
+
+        .stat-card.bg-warning {
+            background: linear-gradient(135deg, #ffffff 0%, #fffbeb 100%);
+            border-color: rgba(245, 158, 11, 0.2);
+        }
+
+        .stat-card.bg-warning:hover {
+            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.2);
+            border-color: var(--warning);
+        }
+
+        .stat-card.bg-warning::before {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, transparent 60%);
+        }
+
+        .stat-card.bg-info {
+            background: linear-gradient(135deg, #ffffff 0%, #f5f3ff 100%);
+            border-color: rgba(139, 92, 246, 0.2);
+        }
+
+        .stat-card.bg-info:hover {
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.2);
+            border-color: var(--purple);
+        }
+
+        .stat-card.bg-info::before {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, transparent 60%);
+        }
+
+        .stat-card .stat-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(99, 102, 241, 0.05) 100%);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .stat-card:hover .stat-icon {
+            transform: scale(1.08) rotate(3deg);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.18) 0%, rgba(99, 102, 241, 0.08) 100%);
+        }
+
+        .stat-card .stat-icon i {
+            font-size: 28px;
+            color: var(--primary);
+            transition: transform 0.4s ease;
+        }
+
+        .stat-card.bg-success .stat-icon {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(34, 197, 94, 0.05) 100%);
+            border-color: rgba(34, 197, 94, 0.2);
+        }
+
+        .stat-card.bg-success .stat-icon i {
+            color: var(--success);
+        }
+
+        .stat-card.bg-warning .stat-icon {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(245, 158, 11, 0.05) 100%);
+            border-color: rgba(245, 158, 11, 0.2);
+        }
+
+        .stat-card.bg-warning .stat-icon i {
+            color: var(--warning);
+        }
+
+        .stat-card.bg-info .stat-icon {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%);
+            border-color: rgba(139, 92, 246, 0.2);
+        }
+
+        .stat-card.bg-info .stat-icon i {
+            color: var(--info);
+        }
+
+        .stat-card .stat-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            position: relative;
+            z-index: 1;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-card .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            position: relative;
+            z-index: 1;
+            letter-spacing: -0.5px;
+        }
+
+        .stat-card .stat-info {
+            flex-grow: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Stats Grid Layout */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .stat-card {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        /* Dashboard Content Layout */
+        .dashboard-content {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 24px;
+        }
+
+        @media (max-width: 1200px) {
+            .dashboard-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .dashboard-main {
+            flex-grow: 1;
+            min-width: 0;
+            overflow-x: hidden;
+        }
+
+        .dashboard-sidebar {
+            flex-shrink: 0;
+        }
+
+        /* Tables - Premium Style */
+        .table-container {
+            overflow-x: auto;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(226, 232, 240, 0.6);
+            background: var(--bg-card);
+            box-shadow: var(--shadow);
+        }
+
+        .table {
+            margin-bottom: 0;
+            min-width: 700px;
+            font-size: 14px;
+        }
+
+        .table th {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--border-color);
+            padding: 16px 20px;
+            white-space: nowrap;
+            background: linear-gradient(135deg, #fafbfc 0%, #f8fafc 100%);
+        }
+
+        .table td {
+            padding: 16px 20px;
+            font-size: 14px;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        .table-hover tbody tr {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .table-hover tbody tr:hover {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.04) 0%, rgba(6, 182, 212, 0.02) 100%);
+            transform: scale(1.002);
+        }
+
+        .table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Badges - Premium Style */
+        .badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            border: 1px solid transparent;
+        }
+
+        .badge.bg-success {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(16, 185, 129, 0.06) 100%);
+            color: #000000;
+            border-color: rgba(16, 185, 129, 0.25);
+        }
+
+        .badge.bg-danger {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.12) 0%, rgba(239, 68, 68, 0.06) 100%);
+            color: #000000;
+            border-color: rgba(239, 68, 68, 0.25);
+        }
+
+        .badge.bg-warning {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(245, 158, 11, 0.06) 100%);
+            color: #d97706;
+            border-color: rgba(245, 158, 11, 0.25);
+        }
+
+        .badge.bg-info {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(99, 102, 241, 0.06) 100%);
+            color: #4f46e5;
+            border-color: rgba(99, 102, 241, 0.25);
+        }
+
+        .badge.bg-secondary {
+            background: linear-gradient(135deg, rgba(100, 116, 139, 0.12) 0%, rgba(100, 116, 139, 0.06) 100%);
+            color: #475569;
+            border-color: rgba(100, 116, 139, 0.25);
+        }
+
+        /* Buttons - Premium Style */
+        .btn {
+            padding: 12px 24px;
+            border-radius: var(--radius);
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.5);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-outline-primary {
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            background: transparent;
+        }
+
+        .btn-outline-primary:hover {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%);
+            color: var(--danger);
+            border: 2px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, var(--danger) 0%, #f87171 100%);
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+            color: var(--success);
+            border: 2px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, var(--success) 0%, #34d399 100%);
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+        }
+
+        /* Forms - Enhanced */
+        .form-control {
+            padding: 12px 16px;
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius);
+            font-size: 14px;
+            background: #ffffff;
+            color: var(--text-primary);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
+        }
+
+        .form-control::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-select {
+            padding: 12px 16px;
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius);
+            font-size: 14px;
+            background: #ffffff;
+            color: var(--text-primary);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
+        }
+
+        /* Modal - Modern Style */
+        .modal-content {
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.12);
+            background: var(--bg-card);
+        }
+
+        .modal-header {
+            padding: 22px 26px;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(135deg, #fafbfc 0%, #f8fafc 100%);
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: 26px;
+            color: var(--text-primary);
+        }
+
+        .modal-footer {
+            padding: 18px 26px;
+            border-top: 1px solid var(--border-color);
+            background: linear-gradient(135deg, #fafbfc 0%, #f8fafc 100%);
+        }
+
+        /* Code blocks */
+        pre {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            overflow-x: auto;
+            margin: 0;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-md);
+        }
+
+        code {
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        /* Loading States */
+        .loading-skeleton {
+            background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: var(--radius);
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-color);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty States */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 32px;
+            color: var(--text-muted);
+        }
+
+        .empty-state-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .empty-state-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        /* Syntax highlighting */
+        code .keyword {
+            color: #7c3aed;
+        }
+
+        code .string {
+            color: #059669;
+        }
+
+        code .number {
+            color: #ea580c;
+        }
+
+        code .function {
+            color: #2563eb;
+        }
+
+        code .comment {
+            color: #9ca3af;
+            font-style: italic;
+        }
+
+        code .property {
+            color: #d97706;
+        }
+
+        /* Nav Tabs */
+        .nav-tabs {
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 24px;
+        }
+
+        .nav-tabs .nav-link {
+            border: none;
+            border-radius: 8px 8px 0 0;
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-right: 8px;
+            transition: all 0.2s ease;
+            background: transparent;
+        }
+
+        .nav-tabs .nav-link:hover {
+            color: var(--primary);
+            background: rgba(0, 188, 212, 0.05);
+        }
+
+        .nav-tabs .nav-link.active {
+            background: rgba(0, 188, 212, 0.1);
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+        }
+
+        /* Alert */
+        .alert {
+            border-radius: 12px;
+            padding: 16px 20px;
+            border: none;
+            margin-bottom: 24px;
+        }
+
+        .alert-info {
+            background: rgba(0, 255, 255, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+
+        /* User Card */
+        .user-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .user-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        /* List Group */
+        .list-group {
+            background: transparent;
+        }
+
+        .list-group-item {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 14px 0;
+        }
+
+        .list-group-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Sidebar Responsive */
+        @media (max-width: 991px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                min-height: auto;
+                padding: 16px;
+            }
+
+            .sidebar-header {
+                margin-bottom: 16px;
+                padding-bottom: 16px;
+            }
+
+            .nav.flex-column {
+                flex-direction: row !important;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .nav-link {
+                margin-bottom: 0;
+                padding: 10px 14px;
+                font-size: 13px;
+            }
+
+            .nav-link::before {
+                display: none;
+            }
+
+            .nav-link.mt-4 {
+                margin-top: 0 !important;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .sidebar-brand-icon {
+                width: 40px;
+                height: 40px;
+            }
+
+            .sidebar-brand-icon i {
+                font-size: 18px;
+            }
+
+            .sidebar-title {
+                font-size: 15px;
+            }
+
+            .nav-link {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+
+            .nav-link i {
+                font-size: 14px;
+            }
+        }
+
+        /* Page Header Responsive */
+        @media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .page-title {
+                font-size: 22px;
+            }
+
+            .page-subtitle {
+                font-size: 13px;
+            }
+        }
+
+        /* Card Responsive */
+        @media (max-width: 576px) {
+            .card {
+                margin-bottom: 20px;
+            }
+
+            .card-header {
+                padding: 16px 20px;
+            }
+
+            .card-body {
+                padding: 20px;
+            }
+
+            .stat-card {
+                padding: 20px;
+            }
+
+            .stat-card .stat-icon {
+                width: 48px;
+                height: 48px;
+            }
+
+            .stat-card .stat-icon i {
+                font-size: 22px;
+            }
+
+            .stat-value {
+                font-size: 24px;
+            }
+        }
+
+        /* Table Responsive */
+        @media (max-width: 768px) {
+            .table th,
+            .table td {
+                padding: 12px 16px;
+                font-size: 13px;
+            }
+        }
+
+        /* Container fix */
+        .container-fluid {
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .row {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <div class="sidebar-brand">
+                        <div class="sidebar-brand-icon">
+                            <img src="{{ url_for('static', filename='logo.png') }}" alt="AIPG Logo" style="width: 32px; height: 32px; object-fit: contain;">
+                        </div>
+                        <div>
+                            <div class="sidebar-title">AIPG</div>
+                            <div class="sidebar-subtitle">管理控制台</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="nav flex-column">
+                    <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#dashboard">
+                        <i class="bi bi-layout-dashboard"></i> 仪表盘
+                    </button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#providers">
+                        <i class="bi bi-cloud"></i> 服务商管理
+                    </button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#users">
+                        <i class="bi bi-users"></i> 用户配额设置
+                    </button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#logs">
+                        <i class="bi bi-file-text"></i> 请求日志
+                    </button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#api-docs">
+                        <i class="bi bi-code"></i> 平台接入文档
+                    </button>
+                    <a href="/playground" class="nav-link text-warning">
+                        <i class="bi bi-rocket"></i> 🔥 在线 API 调试中心
+                    </a>
+                    <a href="/logout" class="nav-link text-danger mt-4">
+                        <i class="bi bi-box-arrow-right"></i> 退出登录
+                    </a>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content tab-content">
+                <!-- Dashboard Tab -->
+                <div class="tab-pane fade show active" id="dashboard">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">系统概览</h1>
+                            <p class="page-subtitle">实时监控系统运行状态和资源使用情况</p>
+                        </div>
+                        <span class="badge bg-success">
+                            <i class="bi bi-circle-fill"></i> 系统运行中
+                        </span>
+                    </div>
+
+                    <!-- Stats Cards Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="bi bi-server"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-label">总请求数</div>
+                                <div class="stat-value">{{ stats.total_requests or 0 }}</div>
+                            </div>
+                        </div>
+                        <div class="stat-card bg-success">
+                            <div class="stat-icon">
+                                <i class="bi bi-cpu"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-label">总消耗 Tokens</div>
+                                <div class="stat-value">{{ stats.total_tokens or 0 }}</div>
+                            </div>
+                        </div>
+                        <div class="stat-card bg-warning">
+                            <div class="stat-icon">
+                                <i class="bi bi-users"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-label">活跃用户数</div>
+                                <div class="stat-value">{{ users|length }}</div>
+                            </div>
+                        </div>
+                        <div class="stat-card bg-info">
+                            <div class="stat-icon">
+                                <i class="bi bi-cloud"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-label">服务商数量</div>
+                                <div class="stat-value">{{ providers|length }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main Content Area -->
+                    <div class="dashboard-content">
+                        <!-- Recent Activity -->
+                        <div class="dashboard-main">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="bi bi-clock"></i> 近期请求记录</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-container">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>时间</th>
+                                                    <th>用户</th>
+                                                    <th>服务商</th>
+                                                    <th>目标</th>
+                                                    <th>状态</th>
+                                                    <th>Tokens</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for log in logs[:10] %}
+                                                <tr>
+                                                    <td>{{ log.time_str }}</td>
+                                                    <td>
+                                                        <span class="font-medium">用户 {{ log.user_id }}</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="text-primary">{{ log.provider }}</span>
+                                                    </td>
+                                                    <td>
+                                                        <code class="text-xs text-muted">{{ log.target_url.split('/')[-2:]|join('/') }}</code>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge {% if log.status_code == 200 %}bg-success{% else %}bg-danger{% endif %}">
+                                                            {{ log.status_code }}
+                                                        </span>
+                                                    </td>
+                                                    <td>{{ log.tokens_estimated }}</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Side Panel -->
+                        <div class="dashboard-sidebar">
+                            <!-- Top Users -->
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5><i class="bi bi-trophy"></i> 活跃用户排行</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-group list-group-flush">
+                                        {% for user in users[:5] %}
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="d-flex items-center gap-2">
+                                                <i class="bi bi-user-circle text-primary"></i>
+                                                <span>{{ user.username }}</span>
+                                                <span class="badge bg-secondary">{{ user.role }}</span>
+                                            </div>
+                                            <span class="text-muted text-sm">{{ user.quota_used }} tokens</span>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Provider Status -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="bi bi-cloud"></i> 服务商状态</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-group list-group-flush">
+                                        {% for p in providers %}
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="d-flex items-center gap-2">
+                                                <span class="badge bg-info">{{ p.name }}</span>
+                                            </div>
+                                            <span class="badge bg-success">正常</span>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Providers Tab -->
+                <div class="tab-pane fade" id="providers">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">第三方 API 服务商配置</h1>
+                            <p class="page-subtitle">管理和配置后端服务提供商</p>
+                        </div>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProviderModal">
+                            <i class="bi bi-plus"></i> 新增服务商
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-container">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>服务商名称</th>
+                                            <th>基础地址</th>
+                                            <th>可用密钥数</th>
+                                            <th>支持模型</th>
+                                            <th>状态</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for p in providers %}
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <i class="bi bi-cloud-fill text-primary"></i>
+                                                    <span class="font-medium">{{ p.name }}</span>
+                                                </div>
+                                            </td>
+                                            <td><code class="text-sm text-muted">{{ p.base_url }}</code></td>
+                                            <td>{{ p.api_keys|length }}</td>
+                                            <td>{{ p.models|join(', ') }}</td>
+                                            <td>
+                                                <span class="badge bg-success">正常生效</span>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- API Docs Tab for Admin -->
+                <div class="tab-pane fade" id="api-docs">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">平台可用通道与调用代码示例</h1>
+                            <p class="page-subtitle">向客户展示统一的API接入方式</p>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        <strong>代理网关统一入口:</strong> 
+                        <code class="fs-5 ms-2">http://127.0.0.1:8888/v1</code>
+                        <p class="mt-2 mb-0">向客户展示时，所有请求应当直接落入该地址。</p>
+                    </div>
+
+                    <div class="row">
+                        {% for p in providers %}
+                        {% if p.enabled %}
+                        <div class="col-md-12 mb-4">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="bi bi-cloud text-primary"></i>
+                                        <h5 class="mb-0">{{ p.name }}</h5>
+                                    </div>
+                                    <span class="badge bg-info">可对外透出</span>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="nav nav-tabs" id="tabadmin-{{ loop.index }}">
+                                        <li class="nav-item">
+                                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#python-{{ loop.index }}">Python</button>
+                                        </li>
+                                        <li class="nav-item">
+                                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#curl-{{ loop.index }}">cURL</button>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content mt-3">
+                                        <!-- Python Tab -->
+                                        <div class="tab-pane fade show active" id="python-{{ loop.index }}">
+<pre><code>import requests
+
+url = "http://127.0.0.1:8888/v1/chat/completions"
+headers = {
+    "Authorization": "Bearer &lt;这里填写网关签发的专属 API Key&gt;",
+    "Content-Type": "application/json"
+}
+data = {
+    "model": "gpt-3.5-turbo",
+    "messages": [{"role": "user", "content": "你好，测试连接"}]
+}
+response = requests.post(url, headers=headers, json=data)
+print(response.json())</code></pre>
+                                        </div>
+                                        <!-- cURL Tab -->
+                                        <div class="tab-pane fade" id="curl-{{ loop.index }}">
+<pre><code>curl -X POST "http://127.0.0.1:8888/v1/chat/completions" \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Bearer &lt;这里填写网关签发的专属 API Key&gt;" \
+     -d '{
+        "model": "gpt-3.5-turbo",
+        "messages": [{"role": "user", "content": "你好，测试连接"}]
+     }'</code></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Users Tab -->
+                <div class="tab-pane fade" id="users">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">用户流控与配额管理</h1>
+                            <p class="page-subtitle">管理用户的访问配额和速率限制</p>
+                        </div>
+                    </div>
+
+                    {% for user in users %}
+                    <div class="user-card">
+                        <form method="POST" action="/admin/user/update" class="row g-4 align-items-center">
+                            <input type="hidden" name="user_id" value="{{ user.id }}">
+
+                            <div class="col-md-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="bi bi-user-circle text-primary" style="font-size: 24px;"></i>
+                                    <div>
+                                        <strong>{{ user.username }}</strong>
+                                        <span class="badge bg-secondary ms-2">{{ user.role }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <label class="form-label small text-muted">账号状态</label>
+                                <select name="status" class="form-select">
+                                    <option value="active" {% if user.status == 'active' %}selected{% endif %}>正常</option>
+                                    <option value="suspended" {% if user.status == 'suspended' %}selected{% endif %}>封禁</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-2">
+                                <label class="form-label small text-muted">总配额量 (Tokens)</label>
+                                <input type="number" name="quota_total" class="form-control" value="{{ user.quota_total }}">
+                            </div>
+
+                            <div class="col-md-2">
+                                <label class="form-label small text-muted">RPM (请求/分钟)</label>
+                                <input type="number" name="rpm" class="form-control" value="{{ user.rpm }}">
+                            </div>
+
+                            <div class="col-md-2">
+                                <label class="form-label small text-muted">TPM (Tokens/分钟)</label>
+                                <input type="number" name="tpm" class="form-control" value="{{ user.tpm }}">
+                            </div>
+
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-outline-primary w-100">
+                                    <i class="bi bi-save"></i> 保存
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Logs Tab -->
+                <div class="tab-pane fade" id="logs">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">近期代理请求日志</h1>
+                            <p class="page-subtitle">查看系统的请求历史记录</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-container">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>请求时间</th>
+                                            <th>所属用户 ID</th>
+                                            <th>流向服务商</th>
+                                            <th>目标地址</th>
+                                            <th>HTTP 状态码</th>
+                                            <th>估算 Tokens</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for log in logs %}
+                                        <tr>
+                                            <td>{{ log.time_str }}</td>
+                                            <td>{{ log.user_id }}</td>
+                                            <td>{{ log.provider }}</td>
+                                            <td><code class="text-sm">{{ log.target_url }}</code></td>
+                                            <td>
+                                                <span class="badge {% if log.status_code == 200 %}bg-success{% else %}bg-danger{% endif %}">
+                                                    {{ log.status_code }}
+                                                </span>
+                                            </td>
+                                            <td>{{ log.tokens_estimated }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Provider Modal -->
+    <div class="modal fade" id="addProviderModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form method="POST" action="/admin/provider/add">
+                    <div class="modal-header">
+                        <h5 class="modal-title">添加新 API 服务商</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">服务商标识名称</label>
+                            <input type="text" name="name" class="form-control" placeholder="如: Anthropic Cloud" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">基础代理地址 (Base URL)</label>
+                            <input type="url" name="base_url" class="form-control" placeholder="https://api.anthropic.com/v1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">访问密钥 (API Key)</label>
+                            <input type="text" name="api_key" class="form-control" placeholder="sk-ant-xxx..." required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">支持模型列表</label>
+                            <div class="input-group mb-2">
+                                <input type="text" id="modelInput" class="form-control" placeholder="输入模型名称，如: claude-3-opus 或通配符 claude-*">
+                                <button type="button" class="btn btn-outline-primary" onclick="addModel()">
+                                    <i class="bi bi-plus"></i> 添加
+                                </button>
+                            </div>
+                            <div id="modelTags" class="d-flex flex-wrap gap-2 mt-2"></div>
+                            <input type="hidden" name="models" id="modelsField">
+                            <div class="form-text text-muted">
+                                <i class="bi bi-info-circle"></i> 
+                                支持具体模型名（如 gpt-4）或通配符（如 gpt-*、claude-*）。
+                                添加 "*" 可匹配所有模型。
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">取消</button>
+                        <button type="submit" class="btn btn-primary">确认添加</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 模型标签管理
+        let models = [];
+
+        function addModel() {
+            const input = document.getElementById('modelInput');
+            const value = input.value.trim();
+            if (value && !models.includes(value)) {
+                models.push(value);
+                updateModelTags();
+                input.value = '';
+            }
+        }
+
+        function removeModel(model) {
+            models = models.filter(m => m !== model);
+            updateModelTags();
+        }
+
+        function updateModelTags() {
+            const container = document.getElementById('modelTags');
+            const field = document.getElementById('modelsField');
+            container.innerHTML = models.map(m => `
+                <span class="badge bg-info d-flex align-items-center gap-1">
+                    ${m}
+                    <i class="bi bi-x-circle cursor-pointer" onclick="removeModel('${m}')" style="cursor: pointer;"></i>
+                </span>
+            `).join('');
+            field.value = models.join(',');
+        }
+
+        // 回车键添加模型
+        document.getElementById('modelInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addModel();
+            }
+        });
+
+        // 添加常用模型快捷按钮
+        function addCommonModels() {
+            const commonModels = ['gpt-*', 'claude-*', 'gemma*', 'llama*', '*'];
+            commonModels.forEach(m => {
+                if (!models.includes(m)) models.push(m);
+            });
+            updateModelTags();
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
